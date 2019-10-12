@@ -21,7 +21,9 @@
                       {% for projeto in projetos %}
                         <tr>
                           <td>
-                            {{ projeto.nome }}
+                            <a href="/{{projeto.id}}/projeto.html" >
+                              {{ projeto.nome }}
+                            </a>
                           </td>
                         </tr>
                       {% endfor %}

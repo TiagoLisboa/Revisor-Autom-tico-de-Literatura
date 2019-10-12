@@ -69,9 +69,18 @@
           const r = confirm('deseja excluir este artigo?')
           if (r) {
             const artigo = $(this).data('artigo')
-            $.get("/artigo/" + artigo + "/delete", function (data) {
-              location.reload()
-            })
+            window.location.replace("/artigo/" + artigo + "/delete");
+          } else {
+
+          }
+        })
+
+        $(".remover-projeto").on('click', function (ev) {
+          ev.preventDefault()
+          const r = confirm('deseja excluir este projeto?')
+          if (r) {
+            const projeto = $(this).data('projeto')
+            window.location.replace("/projeto/" + projeto + "/delete");
           } else {
 
           }

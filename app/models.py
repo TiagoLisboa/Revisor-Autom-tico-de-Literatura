@@ -48,7 +48,7 @@ class Projeto (db.Model):
     nome        =   db.Column(db.String(500))
     user_id     =   db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     artigos     =   db.relationship('Artigo', backref='projeto', lazy=True, cascade="delete")
-    referencias =   db.relationship('Referencia', backref='projeto', lazy=True)
+    referencias =   db.relationship('Referencia', backref='projeto', lazy=True, cascade="delete")
 
 class Artigo (db.Model):
     id          =   db.Column(db.Integer,     primary_key=True)

@@ -4,7 +4,7 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
-                <h5 class="title">{{ projeto.nome }}</h5> <a href="#"><i class="tim-icons icon-trash-simple"></i></a>
+                <h5 class="title">{{ projeto.nome }}</h5> <a class="remover-projeto" data-projeto="{{ projeto.id }}" href=""><i class="tim-icons icon-trash-simple"></i></a>
               </div>
               <div class="card-body">
 
@@ -129,14 +129,4 @@
         </div>
 
   <script>
-        $(".remover-artigo").on('click', function (ev) {
-          ev.preventDefault();
-          console.log("caralho")
-          let r = confirm('deseja excluir este artigo?')
-          if (r) {
-            //$.get("/artigo/")
-          } else {
-
-          }
-        })
-  </script>
+          </script>

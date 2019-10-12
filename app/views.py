@@ -153,6 +153,39 @@ def projetos():
                             content=render_template( 'pages/projetos.html',
                                                      projetos=projetos) )
 
+
+@app.route('/form_projetos.html', methods=['GET', 'POST'])
+@login_required
+def form_projetos():
+
+    # define login form here
+    form = ProjetoForm()
+
+    # Flask message injected into the page, in case of any errors
+    msg = None
+
+    # custommize your page title / description here
+    page_title = 'Cadastrar Projeto - Extrator Automático de Literatura'
+    page_description = 'Cadastrar projetos de extração automática de literatura.'
+
+    # check if both http method is POST and form is valid on submit
+    if form.validate_on_submit():
+        projeto = Projeto(nome=form.nome.data, user_id=current_user.id)
+        db.session.add(projeto)
+        db.session.commit()
+        flash('Seu projeto foi criado')
+        return redirect(url_for('projetos'))
+
+
+
+    # try to match the pages defined in -> themes/light-bootstrap/pages/
+    return render_template( 'layouts/default.html',
+                            title=page_title,
+                            content=render_template( 'pages/form_projetos.html',
+                                                     form=form,
+                                                     msg=msg) )
+
+
 # Used only for static export
 @app.route('/<projeto_id>/projeto.html')
 @login_required
@@ -169,6 +202,14 @@ def projeto(projeto_id):
                             content=render_template( 'pages/projeto.html',
                                                      projeto=projeto,
                                                      artigo_upload=ArtigoUploadForm()) )
+
+@app.route('/projeto/<projeto_id>/delete', methods=['GET'])
+@login_required
+def projeto_delete(projeto_id):
+    projeto = Projeto.query.get(projeto_id)
+    db.session.delete(projeto)
+    db.session.commit()
+    return redirect('projetos.html')
 
 @app.route('/<projeto_id>/artigo_upload', methods=['POST'])
 @login_required
@@ -212,38 +253,6 @@ def artigo_delete(artigo_id):
     db.session.delete(artigo)
     db.session.commit()
     return redirect('{}/projeto.html'.format(projeto_id))
-
-@app.route('/form_projetos.html', methods=['GET', 'POST'])
-@login_required
-def form_projetos():
-
-    # define login form here
-    form = ProjetoForm()
-
-    # Flask message injected into the page, in case of any errors
-    msg = None
-
-    # custommize your page title / description here
-    page_title = 'Cadastrar Projeto - Extrator Automático de Literatura'
-    page_description = 'Cadastrar projetos de extração automática de literatura.'
-
-    # check if both http method is POST and form is valid on submit
-    if form.validate_on_submit():
-        projeto = Projeto(nome=form.nome.data, user_id=current_user.id)
-        db.session.add(projeto)
-        db.session.commit()
-        flash('Seu projeto foi criado')
-        return redirect(url_for('projetos'))
-
-
-
-    # try to match the pages defined in -> themes/light-bootstrap/pages/
-    return render_template( 'layouts/default.html',
-                            title=page_title,
-                            content=render_template( 'pages/form_projetos.html',
-                                                     form=form,
-                                                     msg=msg) )
-
 
 # Used only for static export
 @app.route('/icons.html')
