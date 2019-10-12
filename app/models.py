@@ -44,10 +44,11 @@ class User(UserMixin, db.Model):
         return self
 
 class Projeto (db.Model):
-    id      =   db.Column(db.Integer,     primary_key=True)
-    nome    =   db.Column(db.String(500))
-    user_id =   db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    artigos =   db.relationship('Artigo', backref='projeto', lazy=True)
+    id          =   db.Column(db.Integer,     primary_key=True)
+    nome        =   db.Column(db.String(500))
+    user_id     =   db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    artigos     =   db.relationship('Artigo', backref='projeto', lazy=True, cascade="delete")
+    referencias =   db.relationship('Referencia', backref='projeto', lazy=True)
 
 class Artigo (db.Model):
     id          =   db.Column(db.Integer,     primary_key=True)
@@ -55,5 +56,12 @@ class Artigo (db.Model):
     country     =   db.Column(db.String(500))
     abstract    =   db.Column(db.Text)
     path        =   db.Column(db.String(500))
+    projeto_id  =   db.Column(db.Integer, db.ForeignKey('projeto.id'), nullable=False)
+    referencias =   db.relationship('Referencia', backref='artigo', lazy=True, cascade="delete")
+
+class Referencia (db.Model):
+    id          =   db.Column(db.Integer,     primary_key=True)
+    texto        =   db.Column(db.String(500), nullable=False)
+    artigo_id   =   db.Column(db.Integer, db.ForeignKey('artigo.id'), nullable=False)
     projeto_id  =   db.Column(db.Integer, db.ForeignKey('projeto.id'), nullable=False)
 

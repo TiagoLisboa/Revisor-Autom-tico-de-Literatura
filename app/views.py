@@ -15,7 +15,7 @@ from app  import app
 from flask       import url_for, redirect, render_template, flash, g, session, jsonify, request, send_from_directory
 from flask_login import login_user, logout_user, current_user, login_required
 from app         import app, lm, db, bc
-from . models    import User, Projeto, Artigo
+from . models    import User, Projeto, Artigo, Referencia
 from . common    import COMMON, STATUS
 from . assets    import *
 from . forms     import LoginForm, RegisterForm, ProjetoForm, ArtigoUploadForm
@@ -190,10 +190,28 @@ def artigo_upload(projeto_id):
                         projeto_id=projeto_id)
         db.session.add(artigo)
         db.session.commit()
+
+        for _ in range(0, random.randint(5, 10)):
+            referencia = Referencia(texto=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5)),
+                                    artigo_id=artigo.id,
+                                    projeto_id=projeto_id)
+            db.session.add(referencia)
+            db.session.commit()
+
+
         flash('Seu artigo foi criado')
 
         return redirect('{}/projeto.html'.format(projeto_id))
 
+
+@app.route('/artigo/<artigo_id>/delete', methods=['GET'])
+@login_required
+def artigo_delete(artigo_id):
+    artigo = Artigo.query.get(artigo_id)
+    projeto_id = artigo.projeto.id
+    db.session.delete(artigo)
+    db.session.commit()
+    return redirect('{}/projeto.html'.format(projeto_id))
 
 @app.route('/form_projetos.html', methods=['GET', 'POST'])
 @login_required

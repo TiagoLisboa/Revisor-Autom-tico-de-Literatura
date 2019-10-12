@@ -64,6 +64,20 @@
   <script>
     $(document).ready(function() {
       $().ready(function() {
+        $(".remover-artigo").on('click', function (ev) {
+          ev.preventDefault()
+          const r = confirm('deseja excluir este artigo?')
+          if (r) {
+            const artigo = $(this).data('artigo')
+            $.get("/artigo/" + artigo + "/delete", function (data) {
+              location.reload()
+            })
+          } else {
+
+          }
+        })
+
+
         $sidebar = $('.sidebar');
         $navbar = $('.navbar');
         $main_panel = $('.main-panel');
@@ -172,6 +186,10 @@
       });
     });
   </script>
+  <script>
+
+  </script>
+
   <script>
     $(document).ready(function() {
       // Javascript method's body can be found in assets/js/demos.js

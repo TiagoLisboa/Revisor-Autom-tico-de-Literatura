@@ -24,6 +24,9 @@
                               <thead class=" text-primary">
                                 <tr>
                                   <th>
+                                    #
+                                  </th>
+                                  <th>
                                     Titulo
                                   </th>
                                   <th>
@@ -37,6 +40,9 @@
                               <tbody>
                                 {% for artigo in projeto.artigos %}
                                   <tr>
+                                    <td>
+                                      <a class="remover-artigo" data-artigo="{{artigo.id}}" href=""><i class="tim-icons icon-trash-simple"></i></a>
+                                    </td>
                                     <td>
                                       {{ artigo.titulo }}
                                     </td>
@@ -70,7 +76,43 @@
 
 
 
-
+                    <div class="content">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="card card-plain">
+                            <div class="card-header">
+                              <h4 class="card-title"> Referencias </h4>
+                            </div>
+                            <div class="card-body">
+                              <div class="table-responsive">
+                                <table class="table " id="">
+                                  <thead class=" text-primary">
+                                    <tr>
+                                      <th>
+                                        Texto
+                                      </th>
+                                      <th>
+                                        Artigo
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {% for referencia in projeto.referencias %}
+                                      <tr>
+                                        <td>
+                                          {{ referencia.texto }}
+                                        </td>
+                                        <td>
+                                          {{ referencia.artigo.titulo }}
+                                        </td>
+                                      </tr>
+                                    {% endfor %}
+                                 </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 
 
 
@@ -86,3 +128,15 @@
           </div>
         </div>
 
+  <script>
+        $(".remover-artigo").on('click', function (ev) {
+          ev.preventDefault();
+          console.log("caralho")
+          let r = confirm('deseja excluir este artigo?')
+          if (r) {
+            //$.get("/artigo/")
+          } else {
+
+          }
+        })
+  </script>
