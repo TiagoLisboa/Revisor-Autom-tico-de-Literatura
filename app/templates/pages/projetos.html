@@ -1,0 +1,33 @@
+
+      <div class="content">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card ">
+              <div class="card-header">
+                <h4 class="card-title"> Projetos </h4>
+                <a class="btn btn-primary" href="/form_projetos.html"> Novo Projeto </a>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table tablesorter " id="">
+                    <thead class=" text-primary">
+                      <tr>
+                        <th>
+                          Nome
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for projeto in projetos %}
+                        <tr>
+                          <td>
+                            {{ projeto.nome }}
+                          </td>
+                        </tr>
+                      {% endfor %}
+                   </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div> 

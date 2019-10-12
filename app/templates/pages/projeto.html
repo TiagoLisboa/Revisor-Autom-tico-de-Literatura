@@ -1,0 +1,88 @@
+
+      <div class="content">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="title">{{ projeto.nome }}</h5> <a href="#"><i class="tim-icons icon-trash-simple"></i></a>
+              </div>
+              <div class="card-body">
+
+
+
+
+                <div class="content">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="card card-plain">
+                        <div class="card-header">
+                          <h4 class="card-title"> Artigos </h4>
+                        </div>
+                        <div class="card-body">
+                          <div class="table-responsive">
+                            <table class="table " id="">
+                              <thead class=" text-primary">
+                                <tr>
+                                  <th>
+                                    Titulo
+                                  </th>
+                                  <th>
+                                    País
+                                  </th>
+                                  <th>
+                                    Resumo
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for artigo in projeto.artigos %}
+                                  <tr>
+                                    <td>
+                                      {{ artigo.titulo }}
+                                    </td>
+                                    <td>
+                                      {{ artigo.country }}
+                                    </td>
+                                    <td>
+                                      {{ artigo.abstract }}
+                                    </td>
+                                  </tr>
+                                {% endfor %}
+                             </tbody>
+                            </table>
+                            <div>
+                              <form method="POST" enctype="multipart/form-data" action="/{{projeto.id}}/artigo_upload">
+                                {{ artigo_upload.hidden_tag() }}
+                                {{ artigo_upload.artigo }}
+                                <input type="submit">
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+

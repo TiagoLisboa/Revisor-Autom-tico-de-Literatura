@@ -1,0 +1,49 @@
+
+      <div class="content">
+        <div class="row">
+          <div class="col-md-10">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="title">Cadastro de Projetos</h5>
+              </div>
+              <div class="card-body">
+
+              <form role="form" method="post" action="">
+
+                  {{ form.hidden_tag() }}
+                  
+                  <div class="row">
+
+                    <div class="col-md-1 px-md-1"></div>
+
+                    <div class="col-md-1 px-md-1">
+                      <div class="form-group">
+                        <label>Nome</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-5 px-md-1">
+                      <div class="form-group">
+                        {{ form.nome(placeholder="Nome",class="form-control") }}
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-1 px-md-1"></div>
+
+                    <div class="col-md-1 px-md-1">
+                      <button type="submit" class="btn btn-fill btn-primary">Criar Projeto</button> 
+                    </div>
+
+                  </div>
+
+                </form>
+              </div>
+              </div>
+          </div>
+
+        </div>
+      </div>
+
