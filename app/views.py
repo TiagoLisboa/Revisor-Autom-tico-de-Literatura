@@ -18,7 +18,7 @@ from app         import app, lm, db, bc
 from . models    import User, Projeto, Artigo, Referencia
 from . common    import COMMON, STATUS
 from . assets    import *
-from . forms     import LoginForm, RegisterForm, ProjetoForm, ArtigoUploadForm, ReferenciaForm
+from . forms     import LoginForm, RegisterForm, ProjetoForm, ArtigoUploadForm, ReferenciaForm, ArtigoForm
 from werkzeug.utils import secure_filename
 from subprocess import Popen, PIPE, STDOUT, DEVNULL
 
@@ -271,6 +271,45 @@ def artigo_delete(artigo_id):
     db.session.delete(artigo)
     db.session.commit()
     return redirect('{}/projeto.html'.format(projeto_id))
+
+
+@app.route('/artigo/<artigo_id>/editar.html', methods=['GET', 'POST'])
+@login_required
+def artigo_edit(artigo_id):
+
+    # get reference from database
+    artigo = Artigo.query.get(artigo_id)
+
+    # define login form here
+    form = ArtigoForm()
+
+    # Flask message injected into the page, in case of any errors
+    msg = None
+
+    # custommize your page title / description here
+    page_title = 'Editar Artigo - Extrator Automático de Literatura'
+    page_description = 'Editar artigo de extração automática de literatura.'
+
+    # check if both http method is POST and form is valid on submit
+    if form.validate_on_submit():
+        artigo.titulo = form.titulo.data;
+        artigo.country = form.country.data;
+        artigo.abstract = form.abstract.data;
+        db.session.commit()
+        flash('Seu artigo foi atualizado')
+        return redirect('{}/projeto.html'.format(artigo.projeto_id))
+
+
+
+    # try to match the pages defined in -> themes/light-bootstrap/pages/
+    return render_template( 'layouts/default.html',
+                            title=page_title,
+                            content=render_template( 'pages/form_artigo.html',
+                                                     form=form,
+                                                     msg=msg,
+                                                     artigo=artigo) )
+
+
 
 
 @app.route('/referencia/<referencia_id>/delete', methods=['GET'])

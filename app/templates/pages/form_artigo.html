@@ -1,0 +1,145 @@
+
+      <div class="content">
+        <div class="row">
+          <div class="col-md-10">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="title">Editar Artigo</h5>
+              </div>
+              <div class="card-body">
+
+                <form role="form" method="post" action="">
+
+                  {{ form.hidden_tag() }}
+                  
+                  <div class="row">
+
+                    <div class="col-md-1 px-md-1"></div>
+
+                    <div class="col-md-1 px-md-1">
+                      <div class="form-group">
+                        <label>Titulo</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-9 px-md-1">
+                      <div class="form-group">
+                        {{ form.titulo(placeholder="Titulo",class="form-control", value=artigo.titulo) }}
+                      </div>
+                    </div>
+
+                  </div>
+
+
+
+                  <div class="row">
+
+                    <div class="col-md-1 px-md-1"></div>
+
+                    <div class="col-md-1 px-md-1">
+                      <div class="form-group">
+                        <label>País</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-9 px-md-1">
+                      <div class="form-group">
+                        {{ form.country(placeholder="País",class="form-control", value=artigo.country) }}
+                      </div>
+                    </div>
+
+                  </div>
+
+
+                  <div class="row">
+
+                    <div class="col-md-1 px-md-1"></div>
+
+                    <div class="col-md-1 px-md-1">
+                      <div class="form-group">
+                        <label>Resumo (Abstract)</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-9 px-md-1">
+                      <div class="form-group">
+                        <textarea class="form-control" id="texto" name="abstract" placeholder="Resumo" required="">{{ artigo.abstract }}</textarea>
+                      </div>
+                    </div>
+
+                  </div>
+
+
+
+                  <div class="row">
+                    <div class="col-md-1 px-md-1"></div>
+
+                    <div class="col-md-1 px-md-1">
+                      <button type="submit" class="btn btn-fill btn-primary">Editar Artigo</button> 
+                    </div>
+
+                  </div>
+
+                </form>
+
+
+
+
+
+                    <div class="content">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="card card-plain">
+                            <div class="card-header">
+                              <h4 class="card-title"> Referencias </h4>
+                            </div>
+                            <div class="card-body">
+                              <div class="table-responsive">
+                                <table class="table " id="">
+                                  <thead class=" text-primary">
+                                    <tr>
+                                      <th>
+                                        #
+                                      </th>
+                                      <th>
+                                        Texto
+                                      </th>
+                                      <th>
+                                        Artigo
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {% for referencia in artigo.referencias %}
+                                      <tr>
+                                        <td>
+                                          <a class="remover-referencia" data-referencia="{{referencia.id}}" href=""><i class="tim-icons icon-trash-simple"></i></a>
+                                          <a class="editar-referencia" href="/referencia/{{referencia.id}}/editar.html"><i class="tim-icons icon-pencil"></i></a>
+
+                                        </td>
+                                        <td>
+                                          {{ referencia.texto }}
+                                        </td>
+                                        <td>
+                                          {{ referencia.artigo.titulo }}
+                                        </td>
+                                      </tr>
+                                    {% endfor %}
+                                 </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+
+
+
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+

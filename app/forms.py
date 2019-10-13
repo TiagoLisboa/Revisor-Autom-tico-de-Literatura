@@ -27,3 +27,8 @@ class ArtigoUploadForm(FlaskForm):
 
 class ReferenciaForm(FlaskForm):
     texto       = TextAreaField(u'Texto', validators=[DataRequired()])
+
+class ArtigoForm(FlaskForm):
+    titulo      = StringField(u'Título', validators=[DataRequired()])
+    country     = StringField(u'País', validators=[DataRequired()])
+    abstract    = TextAreaField(u'Resumo (Abstract)', validators=[DataRequired()])
