@@ -10,17 +10,20 @@ from wtforms            import StringField, TextAreaField, SubmitField, Password
 from wtforms.validators import InputRequired, Email, DataRequired
 
 class LoginForm(FlaskForm):
-	username    = StringField  (u'Username'        , validators=[DataRequired()])
-	password    = PasswordField(u'Password'        , validators=[DataRequired()])
+    username    = StringField  (u'Username'        , validators=[DataRequired()])
+    password    = PasswordField(u'Password'        , validators=[DataRequired()])
 
 class RegisterForm(FlaskForm):
-	username    = StringField  (u'Username'  , validators=[DataRequired()])
-	password    = PasswordField(u'Password'  , validators=[DataRequired()])
-	email       = StringField  (u'Email'     , validators=[DataRequired(), Email()])
-	name        = StringField  (u'Name'      , validators=[DataRequired()])
+    username    = StringField  (u'Username'  , validators=[DataRequired()])
+    password    = PasswordField(u'Password'  , validators=[DataRequired()])
+    email       = StringField  (u'Email'     , validators=[DataRequired(), Email()])
+    name        = StringField  (u'Name'      , validators=[DataRequired()])
 
 class ProjetoForm(FlaskForm):
-    nome    =   StringField(u'Nome', validators=[DataRequired()])
+    nome        = StringField(u'Nome', validators=[DataRequired()])
 
 class ArtigoUploadForm(FlaskForm):
-    artigo  =   FileField(validators=[FileRequired()])
+    artigo      = FileField(validators=[FileRequired()])
+
+class ReferenciaForm(FlaskForm):
+    texto       = TextAreaField(u'Texto', validators=[DataRequired()])

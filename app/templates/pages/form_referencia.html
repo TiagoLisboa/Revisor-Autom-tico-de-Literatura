@@ -1,0 +1,49 @@
+
+      <div class="content">
+        <div class="row">
+          <div class="col-md-10">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="title">Editar Referência</h5>
+              </div>
+              <div class="card-body">
+
+              <form role="form" method="post" action="">
+
+                  {{ form.hidden_tag() }}
+                  
+                  <div class="row">
+
+                    <div class="col-md-1 px-md-1"></div>
+
+                    <div class="col-md-1 px-md-1">
+                      <div class="form-group">
+                        <label>Texto</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-5 px-md-1">
+                      <div class="form-group">
+                        <textarea class="form-control" id="texto" name="texto" placeholder="texto" required="">{{ referencia.texto }}</textarea>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-1 px-md-1"></div>
+
+                    <div class="col-md-1 px-md-1">
+                      <button type="submit" class="btn btn-fill btn-primary">Editar Referência</button> 
+                    </div>
+
+                  </div>
+
+                </form>
+              </div>
+              </div>
+          </div>
+
+        </div>
+      </div>
+

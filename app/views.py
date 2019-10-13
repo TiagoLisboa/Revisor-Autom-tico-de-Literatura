@@ -18,7 +18,7 @@ from app         import app, lm, db, bc
 from . models    import User, Projeto, Artigo, Referencia
 from . common    import COMMON, STATUS
 from . assets    import *
-from . forms     import LoginForm, RegisterForm, ProjetoForm, ArtigoUploadForm
+from . forms     import LoginForm, RegisterForm, ProjetoForm, ArtigoUploadForm, ReferenciaForm
 from werkzeug.utils import secure_filename
 from subprocess import Popen, PIPE, STDOUT, DEVNULL
 
@@ -285,10 +285,38 @@ def referencia_delete(referencia_id):
 @app.route('/referencia/<referencia_id>/editar.html', methods=['GET', 'POST'])
 @login_required
 def referencia_edit(referencia_id):
+
+    # get reference from database
     referencia = Referencia.query.get(referencia_id)
-    db.session.delete(referencia)
-    db.session.commit()
-    return redirect('{}/projeto.html'.format(projeto_id))
+
+    # define login form here
+    form = ReferenciaForm()
+
+    # Flask message injected into the page, in case of any errors
+    msg = None
+
+    # custommize your page title / description here
+    page_title = 'Editar Referencia - Extrator Automático de Literatura'
+    page_description = 'Editar referencia de extração automática de literatura.'
+
+    # check if both http method is POST and form is valid on submit
+    if form.validate_on_submit():
+        referencia.texto = form.texto.data;
+        db.session.commit()
+        flash('Sua referencia foi atualizada')
+        return redirect('{}/projeto.html'.format(referencia.projeto_id))
+
+
+
+    # try to match the pages defined in -> themes/light-bootstrap/pages/
+    return render_template( 'layouts/default.html',
+                            title=page_title,
+                            content=render_template( 'pages/form_referencia.html',
+                                                     form=form,
+                                                     msg=msg,
+                                                     referencia=referencia) )
+
+
 
 # Used only for static export
 @app.route('/icons.html')
