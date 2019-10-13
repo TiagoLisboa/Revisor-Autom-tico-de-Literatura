@@ -86,6 +86,17 @@
           }
         })
 
+        $(".remover-referencia").on('click', function (ev) {
+          ev.preventDefault()
+          const r = confirm('deseja excluir esta referência?')
+          if (r) {
+            const referencia = $(this).data('referencia')
+            window.location.replace("/referencia/" + referencia + "/delete");
+          } else {
+
+          }
+        })
+
 
         $sidebar = $('.sidebar');
         $navbar = $('.navbar');

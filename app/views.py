@@ -20,6 +20,7 @@ from . common    import COMMON, STATUS
 from . assets    import *
 from . forms     import LoginForm, RegisterForm, ProjetoForm, ArtigoUploadForm
 from werkzeug.utils import secure_filename
+from subprocess import Popen, PIPE, STDOUT, DEVNULL
 
 import os, shutil, re, cgi, random, string
 
@@ -224,16 +225,33 @@ def artigo_upload(projeto_id):
             )
         f.save(filepath)
 
-        artigo = Artigo(titulo=filename,
-                        country=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5)),
-                        abstract=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(500)),
+        p = Popen(['java', '-jar', './app/pdfDataExtractor.jar', filepath], stdout=PIPE, stderr=DEVNULL)
+
+        title = ''
+        country = ''
+        abstract = ''
+        references = []
+
+        for i, line in enumerate(p.stdout):
+            if i == 0:
+                title       = line.decode("utf-8")
+            elif i == 1:
+                country     = line.decode("utf-8")
+            elif i == 2:
+                abstract    = line.decode("utf-8")
+            else:
+                references.append(line.decode("utf-8"))
+
+        artigo = Artigo(titulo=title,
+                        country=country,
+                        abstract=abstract,
                         path=filepath,
                         projeto_id=projeto_id)
         db.session.add(artigo)
         db.session.commit()
 
-        for _ in range(0, random.randint(5, 10)):
-            referencia = Referencia(texto=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5)),
+        for ref in references:
+            referencia = Referencia(texto=ref,
                                     artigo_id=artigo.id,
                                     projeto_id=projeto_id)
             db.session.add(referencia)
@@ -251,6 +269,24 @@ def artigo_delete(artigo_id):
     artigo = Artigo.query.get(artigo_id)
     projeto_id = artigo.projeto.id
     db.session.delete(artigo)
+    db.session.commit()
+    return redirect('{}/projeto.html'.format(projeto_id))
+
+
+@app.route('/referencia/<referencia_id>/delete', methods=['GET'])
+@login_required
+def referencia_delete(referencia_id):
+    referencia = Referencia.query.get(referencia_id)
+    projeto_id = referencia.projeto.id
+    db.session.delete(referencia)
+    db.session.commit()
+    return redirect('{}/projeto.html'.format(projeto_id))
+
+@app.route('/referencia/<referencia_id>/editar.html', methods=['GET', 'POST'])
+@login_required
+def referencia_edit(referencia_id):
+    referencia = Referencia.query.get(referencia_id)
+    db.session.delete(referencia)
     db.session.commit()
     return redirect('{}/projeto.html'.format(projeto_id))
 

@@ -89,6 +89,9 @@
                                   <thead class=" text-primary">
                                     <tr>
                                       <th>
+                                        #
+                                      </th>
+                                      <th>
                                         Texto
                                       </th>
                                       <th>
@@ -99,6 +102,9 @@
                                   <tbody>
                                     {% for referencia in projeto.referencias %}
                                       <tr>
+                                        <td>
+                                          <a class="remover-referencia" data-referencia="{{referencia.id}}" href=""><i class="tim-icons icon-trash-simple"></i></a>
+                                        </td>
                                         <td>
                                           {{ referencia.texto }}
                                         </td>
