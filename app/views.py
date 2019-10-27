@@ -225,7 +225,7 @@ def artigo_upload(projeto_id):
             )
         f.save(filepath)
 
-        p = Popen(['java', '-jar', './app/pdfDataExtractor.jar', filepath], stdout=PIPE, stderr=DEVNULL)
+        p = Popen(['java', '-jar', './app/articleTextMiner.jar', filepath], stdout=PIPE, stderr=DEVNULL)
 
         title = ''
         country = ''
@@ -236,9 +236,9 @@ def artigo_upload(projeto_id):
             if i == 0:
                 title       = line.decode("utf-8")
             elif i == 1:
-                country     = line.decode("utf-8")
-            elif i == 2:
                 abstract    = line.decode("utf-8")
+            elif i == 2:
+                country     = line.decode("utf-8")
             else:
                 references.append(line.decode("utf-8"))
 
