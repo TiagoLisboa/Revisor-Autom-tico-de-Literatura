@@ -83,7 +83,8 @@
                         <div class="col-md-12">
                           <div class="card card-plain">
                             <div class="card-header">
-                              <h4 class="card-title"> Referencias </h4>
+                              <h4 class="card-title"> Referências </h4>
+                              <a class="btn btn-primary" href="/projeto/{{projeto.id}}/cruzar">Cruzar Referências</a>
                             </div>
                             <div class="card-body">
                               <div class="table-responsive">
@@ -99,11 +100,14 @@
                                       <th>
                                         Artigo
                                       </th>
+                                      <th>
+                                        Referências Cruzadas
+                                      </th>
                                     </tr>
                                   </thead>
                                   <tbody>
                                     {% for referencia in projeto.referencias %}
-                                      <tr>
+                                      <tr id="ref{{referencia.id}}">
                                         <td>
                                           <a class="remover-referencia" data-referencia="{{referencia.id}}" href=""><i class="tim-icons icon-trash-simple"></i></a>
                                           <a class="editar-referencia" href="/referencia/{{referencia.id}}/editar.html"><i class="tim-icons icon-pencil"></i></a>
@@ -114,6 +118,11 @@
                                         </td>
                                         <td>
                                           {{ referencia.artigo.titulo }}
+                                        </td>
+                                        <td>
+                                          {% for c_ref in referencia.cross_ref %}
+                                            <a href="#ref{{c_ref.referencia_cruzada.id}}">[{{c_ref.referencia_cruzada.id}}]</a> 
+                                          {% endfor %}
                                         </td>
                                       </tr>
                                     {% endfor %}

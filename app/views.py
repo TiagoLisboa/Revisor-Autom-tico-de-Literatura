@@ -14,8 +14,9 @@ from app  import app
 
 from flask       import url_for, redirect, render_template, flash, g, session, jsonify, request, send_from_directory
 from flask_login import login_user, logout_user, current_user, login_required
+from fuzzywuzzy import fuzz
 from app         import app, lm, db, bc
-from . models    import User, Projeto, Artigo, Referencia
+from . models    import User, Projeto, Artigo, Referencia, ReferenciaCruzada
 from . common    import COMMON, STATUS
 from . assets    import *
 from . forms     import LoginForm, RegisterForm, ProjetoForm, ArtigoUploadForm, ReferenciaForm, ArtigoForm
@@ -228,27 +229,38 @@ def artigo_upload(projeto_id):
         p = Popen(['java', '-jar', './app/articleTextMiner.jar', filepath], stdout=PIPE, stderr=DEVNULL)
 
         title = ''
-        country = ''
+        country = []
         abstract = ''
         references = []
+        isReference = False
 
         for i, line in enumerate(p.stdout):
             if i == 0:
                 title       = line.decode("utf-8")
             elif i == 1:
                 abstract    = line.decode("utf-8")
-            elif i == 2:
-                country     = line.decode("utf-8")
             else:
-                references.append(line.decode("utf-8"))
+                if "REFERENCES" in line.decode("utf-8"):
+                    isReference = True
+                    continue
+                if not isReference:
+                    country.append(line.decode("utf-8"))
+                else:
+                    references.append(line.decode("utf-8"))
+
+
 
         artigo = Artigo(titulo=title,
-                        country=country,
+                        country=''.join(country),
                         abstract=abstract,
                         path=filepath,
                         projeto_id=projeto_id)
         db.session.add(artigo)
         db.session.commit()
+
+        projeto             = Projeto.query.get(projeto_id)
+        referenciasBanco    = projeto.referencias
+        referenciasCruzadas = []
 
         for ref in references:
             referencia = Referencia(texto=ref,
@@ -256,11 +268,52 @@ def artigo_upload(projeto_id):
                                     projeto_id=projeto_id)
             db.session.add(referencia)
             db.session.commit()
+            for pref in referenciasBanco:
+                ratio = fuzz.ratio(ref, pref.texto)
+                if ratio > 70:
+                    referenciasCruzadas.append({"ref1": pref.id, "ref2": referencia.id})
 
+        for refc in referenciasCruzadas:
+            ref_c = ReferenciaCruzada(
+                   ref1=refc["ref1"],
+                   ref2=refc["ref2"],
+                   projeto_id=projeto_id
+                    )
+            db.session.add(ref_c)
+            db.session.commit()
+            ref_c = ReferenciaCruzada(
+                   ref1=refc["ref2"],
+                   ref2=refc["ref1"],
+                   projeto_id=projeto_id
+                    )
+            db.session.add(ref_c)
+            db.session.commit()
 
         flash('Seu artigo foi criado')
 
         return redirect('{}/projeto.html'.format(projeto_id))
+
+@app.route('/projeto/<projeto_id>/cruzar', methods=['GET'])
+@login_required
+def cruzar_referencias_projeto(projeto_id):
+    projeto = Projeto.query.get(projeto_id)
+    db.session.query(ReferenciaCruzada).filter(ReferenciaCruzada.projeto_id == projeto_id).delete()
+    db.session.commit()
+    refs = projeto.referencias
+    for ref1 in refs:
+        for ref2 in refs:
+            if ref1 != ref2:
+                ratio = fuzz.ratio(ref1.texto, ref2.texto)
+                if ratio > 70:
+                    ref_c = ReferenciaCruzada(
+                            ref1=ref1.id,
+                            ref2=ref1.id,
+                            projeto_id=projeto_id
+                            )
+                    db.session.add(ref_c)
+                    db.session.commit()
+    return redirect('{}/projeto.html'.format(projeto_id))
+
 
 
 @app.route('/artigo/<artigo_id>/delete', methods=['GET'])

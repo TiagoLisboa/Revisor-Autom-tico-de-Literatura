@@ -7,6 +7,8 @@ Author: AppSeed.us - App Generator
 from app         import db
 from flask_login import UserMixin
 
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+
 from . common    import COMMON, STATUS, DATATYPE
 
 class User(UserMixin, db.Model):
@@ -49,6 +51,7 @@ class Projeto (db.Model):
     user_id     =   db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     artigos     =   db.relationship('Artigo', backref='projeto', lazy=True, cascade="delete")
     referencias =   db.relationship('Referencia', backref='projeto', lazy=True, cascade="delete")
+    cross_refs  =   db.relationship('ReferenciaCruzada', backref='projeto', lazy=True, cascade="delete")
 
 class Artigo (db.Model):
     id          =   db.Column(db.Integer,     primary_key=True)
@@ -60,8 +63,26 @@ class Artigo (db.Model):
     referencias =   db.relationship('Referencia', backref='artigo', lazy=True, cascade="delete")
 
 class Referencia (db.Model):
-    id          =   db.Column(db.Integer,     primary_key=True)
-    texto        =   db.Column(db.String(500), nullable=False)
-    artigo_id   =   db.Column(db.Integer, db.ForeignKey('artigo.id'), nullable=False)
-    projeto_id  =   db.Column(db.Integer, db.ForeignKey('projeto.id'), nullable=False)
+    __tablename__   =   "referencia"
+    id              =   db.Column(db.Integer,     primary_key=True)
+    texto           =   db.Column(db.String(500), nullable=False)
+    artigo_id       =   db.Column(db.Integer, db.ForeignKey('artigo.id'), nullable=False)
+    projeto_id      =   db.Column(db.Integer, db.ForeignKey('projeto.id'), nullable=False)
+    cross_ref       =   db.relationship('ReferenciaCruzada', lazy="dynamic", cascade="delete", foreign_keys = 'ReferenciaCruzada.ref1')
+    back_cross_ref  =   db.relationship('ReferenciaCruzada', lazy="dynamic", cascade="delete", foreign_keys = 'ReferenciaCruzada.ref2', backref = 'referencia_cruzada')
 
+    #@hybrid_property
+    #def referencia_cruzada(self):
+    #    return self.cross_ref + self.back_cross_ref
+
+    #def __init__ (self):
+    #    self.referencia_cruzada = self.cross_ref + self.back_cross_ref
+
+
+class ReferenciaCruzada (db.Model):
+    __tablename__   =   "referencia_cruzada"
+    id          =   db.Column(db.Integer, primary_key=True)
+    ref1        =   db.Column(db.Integer, db.ForeignKey('referencia.id'), nullable=False)
+    ref2        =   db.Column(db.Integer, db.ForeignKey('referencia.id'), nullable=False)
+    projeto_id  =   db.Column(db.Integer, db.ForeignKey('projeto.id'), nullable=False)
+    #referencia  =   db.relationship("Referencia", back_populates="back_cross_ref")i
