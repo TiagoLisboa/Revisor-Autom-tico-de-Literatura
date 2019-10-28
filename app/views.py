@@ -467,6 +467,7 @@ def typography():
 @app.route('/<path>')
 @login_required
 def index(path):
+    return redirect(url_for("projetos"))
 
     content = None
 
