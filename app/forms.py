@@ -6,7 +6,7 @@ Author: AppSeed.us - App Generator
 
 from flask_wtf          import FlaskForm, RecaptchaField
 from flask_wtf.file     import FileField, FileRequired
-from wtforms            import StringField, TextAreaField, SubmitField, PasswordField
+from wtforms            import StringField, TextAreaField, SubmitField, PasswordField, MultipleFileField
 from wtforms.validators import InputRequired, Email, DataRequired
 
 class LoginForm(FlaskForm):
@@ -23,7 +23,7 @@ class ProjetoForm(FlaskForm):
     nome        = StringField(u'Nome', validators=[DataRequired()])
 
 class ArtigoUploadForm(FlaskForm):
-    artigo      = FileField(validators=[FileRequired()])
+    artigo      = MultipleFileField(validators=[DataRequired()])
 
 class ReferenciaForm(FlaskForm):
     texto       = TextAreaField(u'Texto', validators=[DataRequired()])

@@ -177,9 +177,7 @@
     anychart.onDocumentReady(function() {
         const words = [
           {% for p in palavras %}
-            {% if p.rank > 1 %}
-              { x: "{{ p.palavra }}", value: {{ p.rank }} },
-            {% endif %}
+            { x: "{{ p.palavra }}", value: {{ p.rank }} },
           {% endfor %}
         ]
 

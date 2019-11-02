@@ -220,100 +220,100 @@ def artigo_upload(projeto_id):
     form = ArtigoUploadForm()
 
     if form.validate_on_submit():
-        f           = form.artigo.data
-        filename    = secure_filename(f.filename)
-        filepath    = os.path.join(
-            app.instance_path, 'artigos', filename
-            )
-        f.save(filepath)
+        for f in form.artigo.data:
+            filename    = secure_filename(f.filename)
+            filepath    = os.path.join(
+                app.instance_path, 'artigos', filename
+                )
+            f.save(filepath)
 
-        p = Popen(['java', '-jar', './app/articleTextMiner.jar', filepath], stdout=PIPE, stderr=DEVNULL)
+            p = Popen(['java', '-jar', './app/articleTextMiner.jar', filepath], stdout=PIPE, stderr=DEVNULL)
 
-        title = ''
-        country = []
-        abstract = ''
-        references = []
-        isReference = False
+            title = ''
+            country = []
+            abstract = ''
+            references = []
+            isReference = False
 
-        for i, line in enumerate(p.stdout):
-            if i == 0:
-                title       = line.decode("utf-8")
-            elif i == 1:
-                abstract    = line.decode("utf-8")
-            else:
-                if "REFERENCES" in line.decode("utf-8"):
-                    isReference = True
-                    continue
-                if not isReference:
-                    country.append(line.decode("utf-8"))
+            for i, line in enumerate(p.stdout):
+                if i == 0:
+                    title       = line.decode("utf-8")
+                elif i == 1:
+                    abstract    = line.decode("utf-8")
                 else:
-                    references.append(line.decode("utf-8"))
+                    if "REFERENCES" in line.decode("utf-8"):
+                        isReference = True
+                        continue
+                    if not isReference:
+                        country.append(line.decode("utf-8"))
+                    else:
+                        references.append(line.decode("utf-8"))
 
 
 
-        artigo = Artigo(titulo=title,
-                        country=''.join(country),
-                        abstract=abstract,
-                        path=filepath,
-                        projeto_id=projeto_id)
-        db.session.add(artigo)
-        db.session.commit()
-
-        ### CRUZAR REFERÊNCIAS
-        projeto             = Projeto.query.get(projeto_id)
-        referenciasBanco    = projeto.referencias
-        referenciasCruzadas = []
-
-        for ref in references:
-            referencia = Referencia(texto=ref,
-                                    artigo_id=artigo.id,
-                                    projeto_id=projeto_id)
-            db.session.add(referencia)
+            artigo = Artigo(titulo=title,
+                            country=''.join(country),
+                            abstract=abstract,
+                            path=filepath,
+                            projeto_id=projeto_id)
+            db.session.add(artigo)
             db.session.commit()
-            for pref in referenciasBanco:
-                ratio = fuzz.ratio(ref, pref.texto)
-                if ratio > 70:
-                    referenciasCruzadas.append({"ref1": pref.id, "ref2": referencia.id})
 
-        for refc in referenciasCruzadas:
-            ref_c = ReferenciaCruzada(
-                   ref1=refc["ref1"],
-                   ref2=refc["ref2"],
-                   projeto_id=projeto_id
-                    )
-            db.session.add(ref_c)
-            ref_c = ReferenciaCruzada(
-                   ref1=refc["ref2"],
-                   ref2=refc["ref1"],
-                   projeto_id=projeto_id
-                    )
-            db.session.add(ref_c)
+            ### CRUZAR REFERÊNCIAS
+            projeto             = Projeto.query.get(projeto_id)
+            referenciasBanco    = projeto.referencias
+            referenciasCruzadas = []
 
-        ### RANKEAR PALAVRAS
-        palavras    = projeto.palavras
-        word_list   = abstract.split()
-        ab_palavras = []
+            for ref in references:
+                referencia = Referencia(texto=ref,
+                                        artigo_id=artigo.id,
+                                        projeto_id=projeto_id)
+                db.session.add(referencia)
+                db.session.commit()
+                for pref in referenciasBanco:
+                    ratio = fuzz.ratio(ref, pref.texto)
+                    if ratio > 70:
+                        referenciasCruzadas.append({"ref1": pref.id, "ref2": referencia.id})
 
-        for word, count in collections.Counter(word_list).items():
-            palavra = Palavra(
-                    palavra     = word,
-                    rank        = count,
-                    projeto_id  = projeto_id,
-                    artigo_id   = artigo.id
-                    )
-            ab_palavras.append(palavra)
+            for refc in referenciasCruzadas:
+                ref_c = ReferenciaCruzada(
+                       ref1=refc["ref1"],
+                       ref2=refc["ref2"],
+                       projeto_id=projeto_id
+                        )
+                db.session.add(ref_c)
+                ref_c = ReferenciaCruzada(
+                       ref1=refc["ref2"],
+                       ref2=refc["ref1"],
+                       projeto_id=projeto_id
+                        )
+                db.session.add(ref_c)
 
-        for i, ab_palavra in enumerate(list(ab_palavras)):
-            for p in palavras:
-                if fuzz.ratio(ab_palavra.palavra, p.palavra) >= 90:
-                    p.rank += ab_palavra.rank
-                    ab_palavras.remove(ab_palavra)
-                    break
+            ### RANKEAR PALAVRAS
+            palavras    = projeto.palavras
+            word_list   = abstract.split()
+            ab_palavras = []
 
-        for palavra in ab_palavras:
-            db.session.add(palavra)
+            for word, count in collections.Counter(word_list).items():
+                palavra = Palavra(
+                        palavra     = word,
+                        rank        = count,
+                        projeto_id  = projeto_id,
+                        artigo_id   = artigo.id
+                        )
+                ab_palavras.append(palavra)
 
-        db.session.commit()
+            for i, ab_palavra in enumerate(list(ab_palavras)):
+                for p in palavras:
+                    if fuzz.ratio(ab_palavra.palavra, p.palavra) >= 90:
+                        p.rank += ab_palavra.rank
+                        ab_palavras.remove(ab_palavra)
+                        break
+
+            for palavra in ab_palavras:
+                db.session.add(palavra)
+
+            db.session.commit()
 
 
         flash('Seu artigo foi criado')
