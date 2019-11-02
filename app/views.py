@@ -341,7 +341,14 @@ def cruzar_referencias_projeto(projeto_id):
                     db.session.commit()
     return redirect('{}/projeto.html'.format(projeto_id))
 
-
+@app.route('/palavra/<palavra_id>/delete', methods=['GET'])
+@login_required
+def palavra_delete(palavra_id):
+    palavra = Palavra.query.get(palavra_id)
+    projeto_id = palavra.projeto.id
+    palavra.deleted = True
+    db.session.commit()
+    return redirect('{}/projeto.html'.format(projeto_id))
 
 @app.route('/artigo/<artigo_id>/delete', methods=['GET'])
 @login_required

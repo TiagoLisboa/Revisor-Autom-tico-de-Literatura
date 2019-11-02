@@ -23,6 +23,7 @@
                             <table class="table " id="">
                               <thead class=" text-primary">
                                 <tr>
+                                  <th> </th>
                                   <th>
                                     #
                                   </th>
@@ -44,6 +45,9 @@
                                       <a class="remover-artigo" data-artigo="{{artigo.id}}" href=""><i class="tim-icons icon-trash-simple"></i></a>
                                       <a class="editar-artigo" href="/artigo/{{artigo.id}}/editar.html"><i class="tim-icons icon-pencil"></i></a>
 
+                                    </td>
+                                    <td>
+                                      [{{ artigo.id }}]
                                     </td>
                                     <td>
                                       {{ artigo.titulo }}
@@ -117,6 +121,7 @@
                                 <table class="table " id="">
                                   <thead class=" text-primary">
                                     <tr>
+                                      <th> </th>
                                       <th>
                                         #
                                       </th>
@@ -138,6 +143,9 @@
                                           <a class="remover-referencia" data-referencia="{{referencia.id}}" href=""><i class="tim-icons icon-trash-simple"></i></a>
                                           <a class="editar-referencia" href="/referencia/{{referencia.id}}/editar.html"><i class="tim-icons icon-pencil"></i></a>
 
+                                        </td>
+                                        <td>
+                                          [{{ referencia.id }}]
                                         </td>
                                         <td>
                                           {{ referencia.texto }}
@@ -175,21 +183,35 @@
 
   <script>
     anychart.onDocumentReady(function() {
-        const words = [
-          {% for p in palavras %}
-            { x: "{{ p.palavra }}", value: {{ p.rank }} },
-          {% endfor %}
-        ]
+      var words = anychart.data.set([
+        {% for p in palavras %}
+          {% if not p.deleted %}
+            { x: "{{ p.palavra }}", value: {{ p.rank }}, id: {{ p.id }} },
+          {% endif %}
+        {% endfor %}
+      ])
 
 
-        const chart = anychart.tagCloud(words)
+      var chart = anychart.tagCloud()
 
-        chart.angles([0])
-        chart.colorRange(true)
-        chart.colorRange().length('80%')
-        chart.container("wordcloud")
-        chart.scale(anychart.scales.log())
-        chart.draw()
+      chart.data(words)
+
+      chart.angles([0])
+      chart.colorRange(true)
+      chart.colorRange().length('80%')
+      chart.container("wordcloud")
+      chart.scale(anychart.scales.log())
+      chart.listen("pointDblClick", function (e) {
+        e.preventDefault()
+        const r = confirm('deseja excluir esta palavra?')
+        if (r) {
+          const palavra = e.point.get("id")
+          window.location.replace("/palavra/" + palavra + "/delete");
+        } else {
+
+        }
+      })
+      chart.draw()
         
       
     })

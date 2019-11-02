@@ -93,5 +93,6 @@ class Palavra (db.Model):
     id          =   db.Column(db.Integer, primary_key=True)
     palavra     =   db.Column(db.String(100), nullable=False)
     rank        =   db.Column(db.Integer, nullable=False)
+    deleted     =   db.Column(db.Boolean, default=False)
     projeto_id  =   db.Column(db.Integer, db.ForeignKey('projeto.id'), nullable=False)
     artigo_id   =   db.Column(db.Integer, db.ForeignKey('artigo.id'), nullable=False)
