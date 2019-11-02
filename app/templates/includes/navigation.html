@@ -26,20 +26,20 @@
                   </div>
                   <b class="caret d-none d-lg-block d-xl-block"></b>
                   <p class="d-lg-none">
-                    Log out
+                    Sair
                   </p>
                 </a>
                 <ul class="dropdown-menu dropdown-navbar">
                   <li class="nav-link"> 
-                    <a href="/user.html" class="nav-item dropdown-item">Profile</a>
+                    <a href="/user.html" class="nav-item dropdown-item">Perfil</a>
                   </li>
                   <li class="dropdown-divider"></li>
                   <li class="nav-link">
 
                     {% if current_user.is_authenticated %}
-                      <a href="{{ url_for('logout') }}" class="nav-item dropdown-item">Log out</a>
+                      <a href="{{ url_for('logout') }}" class="nav-item dropdown-item">Sair</a>
                     {% else %}
-                      <a href="{{ url_for('login') }}" class="nav-item dropdown-item">Log in</a>
+                      <a href="{{ url_for('login') }}" class="nav-item dropdown-item">Entrar</a>
                     {% endif %}
                   </li>
                 </ul>

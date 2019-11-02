@@ -48,6 +48,7 @@ class User(UserMixin, db.Model):
 class Projeto (db.Model):
     id          =   db.Column(db.Integer,     primary_key=True)
     nome        =   db.Column(db.String(500))
+    descricao   =   db.Column(db.Text)
     user_id     =   db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     artigos     =   db.relationship('Artigo', backref='projeto', lazy=True, cascade="delete")
     referencias =   db.relationship('Referencia', backref='projeto', lazy=True, cascade="delete")

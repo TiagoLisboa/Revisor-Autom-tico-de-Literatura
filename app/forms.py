@@ -21,6 +21,7 @@ class RegisterForm(FlaskForm):
 
 class ProjetoForm(FlaskForm):
     nome        = StringField(u'Nome', validators=[DataRequired()])
+    descricao   = StringField(u'Descrição', validators=[DataRequired()])
 
 class ArtigoUploadForm(FlaskForm):
     artigo      = MultipleFileField(validators=[DataRequired()])
