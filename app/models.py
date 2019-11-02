@@ -52,6 +52,7 @@ class Projeto (db.Model):
     artigos     =   db.relationship('Artigo', backref='projeto', lazy=True, cascade="delete")
     referencias =   db.relationship('Referencia', backref='projeto', lazy=True, cascade="delete")
     cross_refs  =   db.relationship('ReferenciaCruzada', backref='projeto', lazy=True, cascade="delete")
+    palavras    =   db.relationship('Palavra', backref='projeto', lazy=True, cascade="delete")
 
 class Artigo (db.Model):
     id          =   db.Column(db.Integer,     primary_key=True)
@@ -61,6 +62,7 @@ class Artigo (db.Model):
     path        =   db.Column(db.String(500))
     projeto_id  =   db.Column(db.Integer, db.ForeignKey('projeto.id'), nullable=False)
     referencias =   db.relationship('Referencia', backref='artigo', lazy=True, cascade="delete")
+    palavras    =   db.relationship('Palavra', backref='artigo', lazy=True, cascade="delete")
 
 class Referencia (db.Model):
     __tablename__   =   "referencia"
@@ -85,4 +87,11 @@ class ReferenciaCruzada (db.Model):
     ref1        =   db.Column(db.Integer, db.ForeignKey('referencia.id'), nullable=False)
     ref2        =   db.Column(db.Integer, db.ForeignKey('referencia.id'), nullable=False)
     projeto_id  =   db.Column(db.Integer, db.ForeignKey('projeto.id'), nullable=False)
-    #referencia  =   db.relationship("Referencia", back_populates="back_cross_ref")i
+    #referencia  =   db.relationship("Referencia", back_populates="back_cross_ref")
+
+class Palavra (db.Model):
+    id          =   db.Column(db.Integer, primary_key=True)
+    palavra     =   db.Column(db.String(100), nullable=False)
+    rank        =   db.Column(db.Integer, nullable=False)
+    projeto_id  =   db.Column(db.Integer, db.ForeignKey('projeto.id'), nullable=False)
+    artigo_id   =   db.Column(db.Integer, db.ForeignKey('artigo.id'), nullable=False)

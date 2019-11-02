@@ -30,6 +30,13 @@
   <link href="/static/assets/demo/demo.css" rel="stylesheet" />
   <!-- My custom css sheet :poop: -->
   <link href="/static/assets/css/custom.css" rel="stylesheet" />
+
+
+  <script src="/static/assets/js/core/jquery.min.js"></script>
+
+  <!-- Word Cloud -->
+  <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+  <script src="https://cdn.anychart.com/releases/v8/js/anychart-tag-cloud.min.js"></script>
 </head>
 
 <body class="">
@@ -51,7 +58,6 @@
   {# include 'includes/fixed-plugin.html' #}
 
   <!--   Core JS Files   -->
-  <script src="/static/assets/js/core/jquery.min.js"></script>
   <script src="/static/assets/js/core/popper.min.js"></script>
   <script src="/static/assets/js/core/bootstrap.min.js"></script>
   <script src="/static/assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
@@ -63,7 +69,10 @@
   <script src="/static/assets/js/black-dashboard.min.js?v=1.0.0"></script>
   <!-- Black Dashboard DEMO methods, don't include it in your project! -->
   <script src="/static/assets/demo/demo.js"></script>
+  <!-- Word Cloud -->
+  <script src="/static/assets/js/jQWCloudv3.1.js"></script>
   <script>
+    console.log("asdf")
     $(document).ready(function() {
       $().ready(function() {
         $(".remover-artigo").on('click', function (ev) {
@@ -208,9 +217,9 @@
       });
     });
   </script>
-  <script>
 
-  </script>
+  {% block scripts %}
+  {% endblock %}
 
   <script>
     $(document).ready(function() {

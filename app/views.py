@@ -16,14 +16,14 @@ from flask       import url_for, redirect, render_template, flash, g, session, j
 from flask_login import login_user, logout_user, current_user, login_required
 from fuzzywuzzy import fuzz
 from app         import app, lm, db, bc
-from . models    import User, Projeto, Artigo, Referencia, ReferenciaCruzada
+from . models    import User, Projeto, Artigo, Referencia, ReferenciaCruzada, Palavra
 from . common    import COMMON, STATUS
 from . assets    import *
 from . forms     import LoginForm, RegisterForm, ProjetoForm, ArtigoUploadForm, ReferenciaForm, ArtigoForm
 from werkzeug.utils import secure_filename
 from subprocess import Popen, PIPE, STDOUT, DEVNULL
 
-import os, shutil, re, cgi, random, string
+import os, shutil, re, cgi, random, string, collections
 
 # provide login manager with load_user callback
 @lm.user_loader
@@ -203,7 +203,8 @@ def projeto(projeto_id):
     return render_template('layouts/default.html',
                             content=render_template( 'pages/projeto.html',
                                                      projeto=projeto,
-                                                     artigo_upload=ArtigoUploadForm()) )
+                                                     artigo_upload=ArtigoUploadForm(),
+                                                     palavras=projeto.palavras) )
 
 @app.route('/projeto/<projeto_id>/delete', methods=['GET'])
 @login_required
@@ -258,6 +259,7 @@ def artigo_upload(projeto_id):
         db.session.add(artigo)
         db.session.commit()
 
+        ### CRUZAR REFERÊNCIAS
         projeto             = Projeto.query.get(projeto_id)
         referenciasBanco    = projeto.referencias
         referenciasCruzadas = []
@@ -280,14 +282,39 @@ def artigo_upload(projeto_id):
                    projeto_id=projeto_id
                     )
             db.session.add(ref_c)
-            db.session.commit()
             ref_c = ReferenciaCruzada(
                    ref1=refc["ref2"],
                    ref2=refc["ref1"],
                    projeto_id=projeto_id
                     )
             db.session.add(ref_c)
-            db.session.commit()
+
+        ### RANKEAR PALAVRAS
+        palavras    = projeto.palavras
+        word_list   = abstract.split()
+        ab_palavras = []
+
+        for word, count in collections.Counter(word_list).items():
+            palavra = Palavra(
+                    palavra     = word,
+                    rank        = count,
+                    projeto_id  = projeto_id,
+                    artigo_id   = artigo.id
+                    )
+            ab_palavras.append(palavra)
+
+        for i, ab_palavra in enumerate(list(ab_palavras)):
+            for p in palavras:
+                if fuzz.ratio(ab_palavra.palavra, p.palavra) >= 90:
+                    p.rank += ab_palavra.rank
+                    ab_palavras.remove(ab_palavra)
+                    break
+
+        for palavra in ab_palavras:
+            db.session.add(palavra)
+
+        db.session.commit()
+
 
         flash('Seu artigo foi criado')
 

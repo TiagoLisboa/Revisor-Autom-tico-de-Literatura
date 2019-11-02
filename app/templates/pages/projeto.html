@@ -77,6 +77,32 @@
 
 
 
+                     <div class="content">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="card card-plain">
+                            <div class="card-header">
+                              <h4 class="card-title"> Presença de palavras nos resumos </h4>
+                            </div>
+                            <div class="card-body">
+                              <div id="wordcloud" style="height: 500px">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                 
+
+
+
+
+
+
+
+
+
+
 
                     <div class="content">
                       <div class="row">
@@ -148,4 +174,25 @@
         </div>
 
   <script>
-          </script>
+    anychart.onDocumentReady(function() {
+        const words = [
+          {% for p in palavras %}
+            {% if p.rank > 1 %}
+              { x: "{{ p.palavra }}", value: {{ p.rank }} },
+            {% endif %}
+          {% endfor %}
+        ]
+
+
+        const chart = anychart.tagCloud(words)
+
+        chart.angles([0])
+        chart.colorRange(true)
+        chart.colorRange().length('80%')
+        chart.container("wordcloud")
+        chart.scale(anychart.scales.log())
+        chart.draw()
+        
+      
+    })
+  </script>
