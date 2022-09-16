@@ -24,7 +24,7 @@ fuzzywuzzy==0.17.0
 invoke==1.3.0
 itsdangerous==1.1.0
 Jinja2==2.10
-Mako==1.1.0
+Mako==1.2.2
 MarkupSafe==1.1.1
 paramiko==2.6.0
 pycparser==2.19
